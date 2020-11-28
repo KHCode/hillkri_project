@@ -1,9 +1,7 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+let users = express.Router();
+const teams = require('./teams');
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+users.use('/teams', teams);
 
-module.exports = router;
+module.exports = users;
