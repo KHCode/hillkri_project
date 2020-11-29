@@ -1,7 +1,8 @@
 const express = require('express');
+const teamHelpers = require('../models/teams');
 let teams = express.Router();
 
-teams.post('/', (req, res) => {
+teams.post('/', teamHelpers.post_team, (req, res) => {
     res.send('this is the POST users/:user_id/teams route!');
 });
 
