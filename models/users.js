@@ -1,3 +1,5 @@
+const jwt = require('express-jwt');
+const jwks = require('jwks-rsa');
 const {Datastore} = require('@google-cloud/datastore');
 const datastore = new Datastore();
 const USERS = "users";
@@ -18,21 +20,20 @@ module.exports = {
     },
 
     post_user: async function (req, res, next) {
-        console.log(req.body.name);
-        console.log(req.body.username);
-        var key = datastore.key([USERS, req.body.name]);
-        const new_user = {
-            "username": req.body.username,  
-            "teams": []};
-        res.locals.res_key = await datastore.save({
-            "key":key, 
-            "data":new_user});
-        console.log(res.locals.res_key);
-        res.locals.isPost = true;
+        if(res.locals.isNewUser) {
+            var key = datastore.key([USERS, req.oidc.user.sub]);
+            const new_user = {
+                "username": req.oidc.user.name,  
+                "teams": []};
+            res.locals.res_key = await datastore.save({
+                "key":key, 
+                "data":new_user});
+            res.locals.isPost = true;
+        }
         next();
     },
 
-    build_user: function (req, res, next) {
+    build_a_user: function (req, res, next) {
         if(res.locals.isPost){
             res.locals.newUser = {
                 "name": req.body.name,
@@ -40,6 +41,17 @@ module.exports = {
                 "teams": []
             };
         }
+        next();
+    },
+
+    build_users: function (req, res, next) {
+        res.locals.users_res = res.locals.users.map((user) => {
+            const name = user[Datastore.KEY].name;
+            const username = user.username;
+            const teams = user.teams;
+            const self = req.protocol + "://" + req.get('host') + req.baseUrl + '/users/' + name;
+            return {name, username, teams, self};
+        });
         next();
     },
 
@@ -53,5 +65,20 @@ module.exports = {
             res.locals.isNewUser = false;
         }
         next();
-    } 
+    },
+    
+    check_jwt: function (req, res, next) {
+        jwt({
+            secret: jwks.expressJwtSecret({
+            cache: true,
+            rateLimit: true,
+            jwksRequestsPerMinute: 5,
+            jwksUri: `https://dev-gkmox8gz.us.auth0.com/.well-known/jwks.json`
+        }),
+    
+        issuer: 'https://dev-gkmox8gz.us.auth0.com/',
+        algorithms: [ 'RS256' ]
+      }),
+      next();
+    },
 }

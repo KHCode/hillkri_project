@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const {Datastore} = require('@google-cloud/datastore');
-const { get_users } = require('../models/users');
+const { get_users, build_users } = require('../models/users');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -13,14 +13,7 @@ router.get('/', function(req, res, next) {
   }
 });
 
-router.get('/users', get_users, (req, res) => {
-  res.locals.users_res = res.locals.users.map((user) => {
-    const name = user[Datastore.KEY].name;
-    const username = user.username;
-    const teams = user.teams;
-    const self = req.protocol + "://" + req.get('host') + req.baseUrl + '/users/' + name;
-    return {name, username, teams, self};
-  });
+router.get('/users', get_users, build_users, (req, res) => {
   res.status(200).json(res.locals.users_res);
 })
 
