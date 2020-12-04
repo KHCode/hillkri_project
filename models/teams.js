@@ -25,7 +25,9 @@ module.exports =  {
     },
     
     get_a_team: async function (req, res, next) {
-    
+        const key = datastore.key([TEAMS, parseInt(req.params.team_id,10)]);
+        res.locals.team = await datastore.get(key);
+        next();
     },
     
     patch_a_team: async function (req, res, next) {
@@ -34,6 +36,10 @@ module.exports =  {
     
     put_a_team: async function (req, res, next) {
     
-    }
+    },
+
+    delete_team: async function (req, res, next) {
+
+    },
 }
 

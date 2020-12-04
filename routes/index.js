@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
     let redirectUrl = req.protocol + '://' + req.get('host') + req.baseUrl + '/users/' + req.oidc.user.sub;
     res.redirect(redirectUrl);
   } else {
-    res.render('index', { title: 'Express' });
+    res.render('index', { title: 'Fantasy Cabinet API' });
   }
 });
 

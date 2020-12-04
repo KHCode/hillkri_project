@@ -1,5 +1,3 @@
-const jwt = require('express-jwt');
-const jwks = require('jwks-rsa');
 const {Datastore} = require('@google-cloud/datastore');
 const datastore = new Datastore();
 const USERS = "users";
@@ -65,20 +63,5 @@ module.exports = {
             res.locals.isNewUser = false;
         }
         next();
-    },
-    
-    check_jwt: function (req, res, next) {
-        jwt({
-            secret: jwks.expressJwtSecret({
-            cache: true,
-            rateLimit: true,
-            jwksRequestsPerMinute: 5,
-            jwksUri: `https://dev-gkmox8gz.us.auth0.com/.well-known/jwks.json`
-        }),
-    
-        issuer: 'https://dev-gkmox8gz.us.auth0.com/',
-        algorithms: [ 'RS256' ]
-      }),
-      next();
     },
 }
