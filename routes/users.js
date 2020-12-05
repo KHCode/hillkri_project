@@ -3,25 +3,39 @@ let users = express.Router();
 const axios = require('axios');
 const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
+const { requiresAuth } = require('express-openid-connect');
 const teams = require('./teams');
 const { post_user, new_user_check, get_a_user, build_a_user } = require('../models/users');
 
 
-check_jwt = jwt({
+check_jwt_sign_in = jwt({
   secret: jwks.expressJwtSecret({
   cache: true,
   rateLimit: true,
   jwksRequestsPerMinute: 5,
   jwksUri: `https://dev-gkmox8gz.us.auth0.com/.well-known/jwks.json`
   }),
-
+  getToken: function fromReq(req) {
+    return req.oidc.idToken;
+  },
   issuer: 'https://dev-gkmox8gz.us.auth0.com/',
   algorithms: [ 'RS256' ]
-}),
-console.log(check_jwt);
+});
 
-users.use('/teams', check_jwt, teams);
-users.get('/', check_jwt, new_user_check, post_user, async (req, res, next) => {
+check_jwt_else = jwt({
+  secret: jwks.expressJwtSecret({
+  cache: true,
+  rateLimit: true,
+  jwksRequestsPerMinute: 5,
+  jwksUri: `https://dev-gkmox8gz.us.auth0.com/.well-known/jwks.json`
+  }),
+  issuer: 'https://dev-gkmox8gz.us.auth0.com/',
+  algorithms: [ 'RS256' ]
+});
+
+
+users.use('/teams', check_jwt_else, teams);
+users.get('/', requiresAuth(), check_jwt_sign_in, new_user_check, post_user, async (req, res, next) => {
   console.log(req.user);
   console.log('-------------------------------');
   console.log(req.oidc.user);

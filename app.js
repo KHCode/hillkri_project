@@ -1,5 +1,5 @@
 var createError = require('http-errors');
-const { auth, requiresAuth } = require('express-openid-connect');
+const { auth } = require('express-openid-connect');
 require('dotenv').config();
 var express = require('express');
 const session = require('express-session');
@@ -48,7 +48,7 @@ app.use(
 );
 
 app.use('/', indexRouter);
-app.use('/users/:user_id', requiresAuth(), usersRouter);
+app.use('/users/:user_id', usersRouter);
 app.use('/pols', polsRouter);
 app.use('/insts', instsRouter);
 
@@ -57,27 +57,26 @@ app.get('/login',(req, res) => {
 });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+// app.use(function(req, res, next) {
+//   next(createError(404));
+// });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  if (err.name === 'UnauthorizedError' && req.method === 'GET') {
-    res.locals.isOwner = false;
-    next();
-  } else if (err.name === 'UnauthorizedError') {
-    res.status(401).send({'Error' : 'invalid token...'});
-  } else {
-    console.error(err.stack)
-    res.status(500).send('Something broke!')
-  }
+// // error handler
+// app.use(function(err, req, res, next) {
+//   // set locals, only providing error in development
+//   res.locals.message = err.message;
+//   if (err.name === 'UnauthorizedError' && req.method === 'GET') {
+//     res.locals.isOwner = false;
+//   } else if (err.name === 'UnauthorizedError') {
+//     res.status(401).send({'Error' : 'invalid token...'});
+//   } else {
+//     console.error(err.stack)
+//     res.status(500).send('Something broke!');
+//   }
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+//   // render the error page
+//   res.status(err.status || 500);
+//   res.render('error');
+// });
 
 module.exports = app;

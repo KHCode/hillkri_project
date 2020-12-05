@@ -21,7 +21,8 @@ module.exports =  {
     },
     
     get_teams: async function (req, res, next) {
-    
+        console.log('GET teams route db function');
+        next();
     },
     
     get_a_team: async function (req, res, next) {
