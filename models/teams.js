@@ -21,7 +21,9 @@ module.exports =  {
     },
     
     get_teams: async function (req, res, next) {
-        console.log('GET teams route db function');
+        const query = datastore.createQuery(TEAMS);
+        const [teams] = await datastore.runQuery(query);
+        res.locals.teams = teams;
         next();
     },
     
