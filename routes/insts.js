@@ -1,24 +1,25 @@
 const express = require('express');
+const { post_inst, get_an_inst, get_insts, edit_an_inst, delete_inst } = require('../models/insts');
 let insts = express.Router();
 
-insts.post('/', (req, res) => {
-    res.send('this is the POST /insts route!');
+insts.post('/', post_inst, get_an_inst, (req, res) => {
+    res.status(201).json(res.locals.inst);
 });
 
-insts.get('/:inst_id', (req, res) => {
-    res.send('this is the GET /insts/:inst_id route!');
+insts.get('/:inst_id', get_an_inst, (req, res) => {
+    res.status(200).json(res.locals.inst);
 });
 
-insts.get('/', (req, res) => {
-    res.send('this is the GET /insts route!');
+insts.get('/', get_insts, (req, res) => {
+    res.status(200).json(res.locals.insts);
 });
 
-insts.put('/:inst_id', (req, res) => {
-    res.send('this is the PUT /insts/:inst_id route!');
+insts.put('/:inst_id', get_an_inst, edit_an_inst, (req, res) => {
+    res.status(200).json(res.locals.edited_inst);
 });
 
-insts.patch('/:inst_id', (req, res) => {
-    res.send('this is the PATCH /insts/:inst_id route!');
+insts.patch('/:inst_id', get_an_inst, edit_an_inst, (req, res) => {
+    res.status(200).json(res.locals.edited_inst);
 });
 
 insts.delete('/:inst_id', (req, res) => {

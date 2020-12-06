@@ -64,4 +64,14 @@ module.exports = {
         }
         next();
     },
+
+    is_user_route: function (req, res, next) {
+        res.locals.isUserRoute = true;
+        next();
+    },
+
+    save_user_id: function (req, res, next) {
+        res.locals.userId = req.params.user_id;
+        next();
+    }
 }

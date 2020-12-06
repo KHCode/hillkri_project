@@ -11,6 +11,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var polsRouter = require('./routes/pols');
 var instsRouter = require('./routes/insts');
+const { save_user_id } = require('./models/users');
 
 var app = express();
 
@@ -48,7 +49,7 @@ app.use(
 );
 
 app.use('/', indexRouter);
-app.use('/users/:user_id', usersRouter);
+app.use('/users/:user_id', save_user_id, usersRouter);
 app.use('/pols', polsRouter);
 app.use('/insts', instsRouter);
 
@@ -57,26 +58,41 @@ app.get('/login',(req, res) => {
 });
 
 // catch 404 and forward to error handler
-// app.use(function(req, res, next) {
-//   next(createError(404));
-// });
+app.use(function(req, res, next) {
+  var error = new createError.NotFound('Could not find that resource');
+  next(error);
+});
 
 // // error handler
-// app.use(function(err, req, res, next) {
-//   // set locals, only providing error in development
-//   res.locals.message = err.message;
-//   if (err.name === 'UnauthorizedError' && req.method === 'GET') {
-//     res.locals.isOwner = false;
-//   } else if (err.name === 'UnauthorizedError') {
-//     res.status(401).send({'Error' : 'invalid token...'});
-//   } else {
-//     console.error(err.stack)
-//     res.status(500).send('Something broke!');
-//   }
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  console.log(err.name);
+  console.log(typeof err.name);
+  console.log(err.status);
 
-//   // render the error page
-//   res.status(err.status || 500);
-//   res.render('error');
-// });
+  if (err.name == 'UnauthorizedError') { //401
+    if (res.locals.isUserRoute) {
+      res.redirect('/');
+    } else {
+      res.status(401).json({Error: 'Invalid token'});
+    }
+  } else if (err.name == 'Forbidden') {              //403
+    res.status(err.status).json({Error: err.message});
+  } else if (err.name == 'NotFound') {               //404
+    res.status(err.status).json({Error: err.message});
+  } else if (err.name == 'MethodNotAllowed') {       //405
+    res.status(err.status).json({Error: err.message});
+  } else if (err.name == 'NotAcceptable') {          //406
+    res.status(err.status).json({Error: err.message});
+  } else {
+    console.error(err.stack)
+    res.status(500).send('Something broke!');
+  }
+
+  // render the error page
+  // res.status(err.status || 500);
+  // res.render('error');
+});
 
 module.exports = app;
