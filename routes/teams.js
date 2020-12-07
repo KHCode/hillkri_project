@@ -24,7 +24,7 @@ teams.patch('/:team_id', get_a_team, edit_a_team, (req, res) => {
 });
 
 teams.delete('/:team_id', delete_team, (req, res) => {
-    res.send('this is the DELETE /users/:user_id/teams/:team_id route!');
+    res.status(204).end();
 });
 
 teams.post('/:team_id/pols/:pol_id', get_a_team, get_a_pol, join_pol_team, edit_a_team, (req, res, next) => {

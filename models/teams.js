@@ -65,16 +65,29 @@ module.exports =  {
         next();
     },
 
-    patch_a_team: async function (req, res, next) {
-        
-    },
-    
-    put_a_team: async function (req, res, next) {
-    
+    remove_pol_from_teams: async function (req, res, next) {
+        for(let i = 0; i < res.locals.teams.length; i++) {
+            if(!res.locals.teams[i].members) {
+                res.locals.teams[i].members = [];
+            }
+            for(let j = 0; j < res.locals.teams[i].members.length; j++) {
+                if(res.locals.teams[i].members[j] == req.params.team_id) {
+                    res.locals.teams[i].members.splice(j, 1);
+                    res.locals.team = res.locals.teams[i];
+
+                    const key = datastore.key([TEAMS, parseInt(res.locals.team.id,10)]);
+                    if(res.locals.team.hasOwnProperty('id')) { delete res.locals.team['id']; }
+                    if(res.locals.team.hasOwnProperty('self')) { delete res.locals.team['self']; }
+                    await datastore.save({"key":key, "data":res.locals.team});
+                }
+            }
+        }
     },
 
     delete_team: async function (req, res, next) {
-
+        const key = datastore.key([TEAMS, parseInt(req.params.team_id,10)]);
+        await datastore.delete(key);
+        next();
     },
 }
 

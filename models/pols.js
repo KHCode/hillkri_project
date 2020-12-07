@@ -99,7 +99,49 @@ module.exports =  {
         next();
     },
 
-    delete_pol: async function (req, res, next) {
+    remove_inst_from_pols: async function (req, res, next) {
+        for(let i = 0; i < res.locals.pols.length; i++) {
+            if(!res.locals.pols[i].jobs) {
+                res.locals.pols[i].jobs = [];
+            }
+            for(let j = 0; j < res.locals.pols[i].jobs.length; i++) {
+                if(res.locals.pols[i].jobs[j] == req.params.inst_id) {
+                    res.locals.pols[i].jobs.splice(j, 1);
+                    res.locals.pol = res.locals.pols[i];
 
+                    const key = datastore.key([POLS, parseInt(res.locals.pol.id,10)]);
+                    if(res.locals.pol.hasOwnProperty('id')) { delete res.locals.pol['id']; }
+                    if(res.locals.pol.hasOwnProperty('self')) { delete res.locals.pol['self']; }
+                    await datastore.save({"key":key, "data":res.locals.pol});
+                }
+            }
+        }
+        next();
+    },
+
+    remove_pol_from_pols: async function (req, res, next) {
+        for(let i = 0; i < res.locals.pols.length; i++) {
+            if(!res.locals.pols[i].actual_team) {
+                res.locals.pols[i].actual_team = [];
+            }
+            for(let j = 0; j < res.locals.pols[i].actual_team.length; j++) {
+                if(res.locals.pols[i].actual_team[j] == req.params.pol_id) {
+                    res.locals.pols[i].actual_team.splice(j, 1);
+                    res.locals.pol = res.locals.pols[i];
+
+                    const key = datastore.key([POLS, parseInt(res.locals.pol.id,10)]);
+                    if(res.locals.pol.hasOwnProperty('id')) { delete res.locals.pol['id']; }
+                    if(res.locals.pol.hasOwnProperty('self')) { delete res.locals.pol['self']; }
+                    await datastore.save({"key":key, "data":res.locals.pol});
+                }
+            }
+        }
+        next();
+    },
+
+    delete_pol: async function (req, res, next) {
+        const key = datastore.key([POLS, parseInt(req.params.pol_id,10)]);
+        await datastore.delete(key);
+        next();
     },
 }

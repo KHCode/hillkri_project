@@ -65,12 +65,29 @@ module.exports =  {
         res.locals.pol.jobs.push(res.locals.inst.id);
         next();
     },
-    
-    put_a_inst: async function (req, res, next) {
-    
+
+    remove_pol_from_insts: async function (req, res, next) {
+        for(let i = 0; i < res.locals.insts.length; i++) {
+            if(!res.locals.insts[i].actual_members){
+                res.locals.insts[i].actual_members = [];
+            }
+            for(let j = 0; j < res.locals.insts[i].actual_members.length; j++) {
+                if(res.locals.insts[i].actual_members[j] == req.params.pol_id) {
+                    res.locals.insts[i].actual_members.splice(j, 1);
+                    res.locals.inst = res.locals.insts[i];
+
+                    const key = datastore.key([INSTS, parseInt(res.locals.inst.id,10)]);
+                    if(res.locals.inst.hasOwnProperty('id')) { delete res.locals.inst['id']; }
+                    if(res.locals.inst.hasOwnProperty('self')) { delete res.locals.inst['self']; }
+                    await datastore.save({"key":key, "data":res.locals.inst});
+                }
+            }
+        }
     },
 
     delete_inst: async function (req, res, next) {
-
+        const key = datastore.key([INSTS, parseInt(req.params.inst_id,10)]);
+        await datastore.delete(key);
+        next();
     },
 }
