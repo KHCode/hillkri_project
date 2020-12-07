@@ -60,8 +60,10 @@ module.exports =  {
         next();
     },
 
-    patch_a_inst: async function (req, res, next) {
-        
+    join_pol_inst: async function (req, res, next) {
+        res.locals.inst.actual_members.push(res.locals.pol.id);
+        res.locals.pol.jobs.push(res.locals.inst.id);
+        next();
     },
     
     put_a_inst: async function (req, res, next) {

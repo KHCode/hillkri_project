@@ -60,6 +60,11 @@ module.exports =  {
         next();
     },
     
+    join_pol_team: async function (req, res, next) {
+        res.locals.team.members.push(res.locals.pol.id);
+        next();
+    },
+
     patch_a_team: async function (req, res, next) {
         
     },

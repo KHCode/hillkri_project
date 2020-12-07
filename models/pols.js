@@ -14,7 +14,7 @@ module.exports =  {
             "net_worth": req.body.net_worth,
             "expertise": req.body.expertise,
             "advocate_for": req.body.advocate_for,
-            "real_team": [],
+            "actual_team": [],
             "jobs": []
         }
         let res_key = await datastore.save({
@@ -68,12 +68,35 @@ module.exports =  {
         next();
     },
     
-    patch_a_pol: async function (req, res, next) {
-        
+    get_a_member: async function (req, res, next) {
+        const key = datastore.key([POLS, parseInt(req.params.member_id,10)]);
+        let member = await datastore.get(key);
+        res.locals.member = member[0];
+        res.locals.member.id = req.params.member_id;
+        res.locals.member.self = req.protocol + "://" + req.get('host') + req.baseUrl + "/" + req.params.member_id;
+        next();
     },
     
-    put_a_pol: async function (req, res, next) {
-    
+    join_actual_team: async function (req, res, next) {
+        res.locals.pol.actual_team.push(res.locals.member.id);
+        res.locals.member.actual_team.push(res.locals.pol.id);
+        next();
+    },
+
+    edit_a_member: async function (req, res, next) {
+        const key = datastore.key([POLS, parseInt(res.locals.member.id,10)]);
+        let pol = {
+            first_name: res.locals.member.first_name, 
+            last_name: res.locals.member.last_name, 
+            net_worth: res.locals.member.net_worth, 
+            party: res.locals.member.party, 
+            expertise: res.locals.member.expertise, 
+            advocate_for: res.locals.member.advocate_for, 
+            jobs: res.locals.member.jobs, 
+            actual_team: res.locals.member.actual_team
+        };
+        await datastore.save({"key":key, "data":pol});
+        next();
     },
 
     delete_pol: async function (req, res, next) {
