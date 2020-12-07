@@ -1,4 +1,5 @@
 var express = require('express');
+var createError = require('http-errors');
 var router = express.Router();
 const {Datastore} = require('@google-cloud/datastore');
 const { get_users, build_users } = require('../models/users');
@@ -16,5 +17,21 @@ router.get('/', function(req, res, next) {
 router.get('/users', get_users, build_users, (req, res) => {
   res.status(200).json(res.locals.users_res);
 })
+
+router.delete('/users', (req, res, next) => {
+  var error = new createError.MethodNotAllowed('You can not use delete at a collections level');
+  console.log(error);
+  console.log("--------------------------")
+  next(error);
+});
+
+router.put('/users', (req, res, next) => {
+  var error = new createError.MethodNotAllowed('You can not use put at a collections level');
+  console.log(error);
+  console.log("--------------------------")
+  next(error);
+});
+
+
 
 module.exports = router;

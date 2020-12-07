@@ -23,7 +23,7 @@ module.exports =  {
     },
     
     get_teams: async function (req, res, next) {
-        const query = datastore.createQuery(TEAMS).filter('owner', '=', res.locals.userId);
+        res.locals.userId ? query = datastore.createQuery(TEAMS).filter('owner', '=', res.locals.userId) : query = datastore.createQuery(TEAMS);
         const [teams] = await datastore.runQuery(query);
         res.locals.teams = teams;
         for(let i = 0; i < teams.length; i++) {
@@ -51,6 +51,7 @@ module.exports =  {
         req.body.public ? team.public = req.body.public : team.public = res.locals.team.public;
         res.locals.team.members && (res.locals.team.members.length > 0 ) ? team.members = res.locals.team.members: team.members = [];
         team.owner = res.locals.team.owner;
+        team.date_created = res.locals.team.date_created;
         res.locals.edited_team = team;
 
         await datastore.save({"key":key, "data":res.locals.edited_team});
@@ -71,20 +72,41 @@ module.exports =  {
                 res.locals.teams[i].members = [];
             }
             for(let j = 0; j < res.locals.teams[i].members.length; j++) {
-                if(res.locals.teams[i].members[j] == req.params.team_id) {
+                if(res.locals.teams[i].members[j] == req.params.pol_id) {
                     res.locals.teams[i].members.splice(j, 1);
                     res.locals.team = res.locals.teams[i];
-
+                    console.log("****remove_pol_from_teams****");
+                    console.log(res.locals.team.id);
                     const key = datastore.key([TEAMS, parseInt(res.locals.team.id,10)]);
                     if(res.locals.team.hasOwnProperty('id')) { delete res.locals.team['id']; }
                     if(res.locals.team.hasOwnProperty('self')) { delete res.locals.team['self']; }
+                    console.log(res.locals.team);
                     await datastore.save({"key":key, "data":res.locals.team});
                 }
             }
         }
+        next();
+    },
+
+    remove_pol_from_a_team: async function (req, res, next) {
+        for(let j = 0; j < res.locals.team.members.length; j++) {
+            if(res.locals.team.members[j] == req.params.pol_id) {
+                res.locals.team.members.splice(j, 1);
+                // console.log("****remove_pol_from_teams****");
+                // console.log(res.locals.team.id);
+                const key = datastore.key([TEAMS, parseInt(res.locals.team.id,10)]);
+                if(res.locals.team.hasOwnProperty('id')) { delete res.locals.team['id']; }
+                if(res.locals.team.hasOwnProperty('self')) { delete res.locals.team['self']; }
+                // console.log(res.locals.team);
+                await datastore.save({"key":key, "data":res.locals.team});
+            }
+        }
+        next();
     },
 
     delete_team: async function (req, res, next) {
+        console.log("****delete_team****");
+        console.log(req.params.team_id);
         const key = datastore.key([TEAMS, parseInt(req.params.team_id,10)]);
         await datastore.delete(key);
         next();

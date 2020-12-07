@@ -81,7 +81,7 @@ app.use(function(err, req, res, next) {
     res.status(err.status).json({Error: err.message});
   } else if (err.name == 'NotFound') {               //404
     res.status(err.status).json({Error: err.message});
-  } else if (err.name == 'MethodNotAllowed') {       //405
+  } else if (err.name == 'MethodNotAllowedError') {       //405
     res.status(err.status).json({Error: err.message});
   } else if (err.name == 'NotAcceptable') {          //406
     res.status(err.status).json({Error: err.message});

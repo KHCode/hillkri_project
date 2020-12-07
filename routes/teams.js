@@ -1,9 +1,15 @@
 const express = require('express');
+var createError = require('http-errors');
 const { get_a_pol, edit_a_pol } = require('../models/pols');
-const { post_team, get_a_team, get_teams, put_a_team, patch_a_team, delete_team, edit_a_team, join_pol_team } = require('../models/teams');
+const { post_team, get_a_team, get_teams, remove_pol_from_a_team, delete_team, edit_a_team, join_pol_team } = require('../models/teams');
 let teams = express.Router();
 
 teams.post('/', post_team, get_a_team, (req, res) => {
+    console.log("---------------------------");
+    console.log(req.user);
+    console.log("---------------------------");
+    console.log(req.get('Authorization'));
+    console.log("---------------------------");
     res.status(201).json(res.locals.team);
 });
 
@@ -31,8 +37,18 @@ teams.post('/:team_id/pols/:pol_id', get_a_team, get_a_pol, join_pol_team, edit_
     res.status(201).json(res.locals.edited_team);
 });
 
-teams.delete('/:team_id/pols/:pol_id', (req, res, next) => {
+teams.delete('/:team_id/pols/:pol_id', get_a_team, remove_pol_from_a_team, (req, res, next) => {
+    res.status(204).end();
+});
 
+teams.delete('/', (req, res, next) => {
+    var error = new createError.MethodNotAllowed('You can not use delete at a collections level');
+    next(error);
+});
+
+teams.put('/', (req, res, next) => {
+    var error = new createError.MethodNotAllowed('You can not use put at a collections level');
+    next(error);
 });
 
 module.exports = teams;

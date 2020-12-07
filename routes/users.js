@@ -6,6 +6,7 @@ const jwks = require('jwks-rsa');
 const { requiresAuth } = require('express-openid-connect');
 const teams = require('./teams');
 const { post_user, new_user_check, get_a_user, build_a_user, is_user_route, save_user_id } = require('../models/users');
+const { check_sub } = require('../helpers/errors');
 
 
 check_jwt_sign_in = jwt({
@@ -33,7 +34,7 @@ check_jwt_else = jwt({
   algorithms: [ 'RS256' ]
 });
 
-users.use('/teams', check_jwt_else, teams);
+users.use('/teams', check_jwt_else, check_sub, teams);
 users.get('/', is_user_route, requiresAuth(), new_user_check, post_user, async (req, res, next) => {
   console.log(req.user);
   console.log('-------------------------------');

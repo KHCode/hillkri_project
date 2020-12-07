@@ -104,14 +104,16 @@ module.exports =  {
             if(!res.locals.pols[i].jobs) {
                 res.locals.pols[i].jobs = [];
             }
-            for(let j = 0; j < res.locals.pols[i].jobs.length; i++) {
+            for(let j = 0; j < res.locals.pols[i].jobs.length; j++) {
                 if(res.locals.pols[i].jobs[j] == req.params.inst_id) {
                     res.locals.pols[i].jobs.splice(j, 1);
                     res.locals.pol = res.locals.pols[i];
-
+                    console.log("****remove_inst_from_pols****");
+                    console.log(res.locals.pol.id);
                     const key = datastore.key([POLS, parseInt(res.locals.pol.id,10)]);
                     if(res.locals.pol.hasOwnProperty('id')) { delete res.locals.pol['id']; }
                     if(res.locals.pol.hasOwnProperty('self')) { delete res.locals.pol['self']; }
+                    console.log(res.locals.pol);
                     await datastore.save({"key":key, "data":res.locals.pol});
                 }
             }
@@ -128,10 +130,12 @@ module.exports =  {
                 if(res.locals.pols[i].actual_team[j] == req.params.pol_id) {
                     res.locals.pols[i].actual_team.splice(j, 1);
                     res.locals.pol = res.locals.pols[i];
-
+                    console.log("****remove_pol_from_pols****");
+                    console.log(res.locals.pol.id);
                     const key = datastore.key([POLS, parseInt(res.locals.pol.id,10)]);
                     if(res.locals.pol.hasOwnProperty('id')) { delete res.locals.pol['id']; }
                     if(res.locals.pol.hasOwnProperty('self')) { delete res.locals.pol['self']; }
+                    console.log(res.locals.pol);
                     await datastore.save({"key":key, "data":res.locals.pol});
                 }
             }
@@ -139,7 +143,57 @@ module.exports =  {
         next();
     },
 
+    remove_inst_from_a_pol: async function (req, res, next) {
+        for(let j = 0; j < res.locals.pol.jobs.length; j++) {
+            if(res.locals.pol.jobs[j] == req.params.inst_id) {
+                res.locals.pol.jobs.splice(j, 1);
+                // console.log("****remove_inst_from_pols****");
+                // console.log(res.locals.pol.id);
+                const key = datastore.key([POLS, parseInt(res.locals.pol.id,10)]);
+                if(res.locals.pol.hasOwnProperty('id')) { delete res.locals.pol['id']; }
+                if(res.locals.pol.hasOwnProperty('self')) { delete res.locals.pol['self']; }
+                // console.log(res.locals.pol);
+                await datastore.save({"key":key, "data":res.locals.pol});
+            }
+        }
+        next();
+    },
+
+    remove_pol_from_a_pol: async function (req, res, next) {
+        for(let j = 0; j < res.locals.pol.actual_team.length; j++) {
+            if(res.locals.pol.actual_team[j] == req.params.member_id) {
+                res.locals.pol.actual_team.splice(j, 1);
+                // console.log("****remove_pol_from_pols****");
+                // console.log(res.locals.pol.id);
+                const key = datastore.key([POLS, parseInt(res.locals.pol.id,10)]);
+                if(res.locals.pol.hasOwnProperty('id')) { delete res.locals.pol['id']; }
+                if(res.locals.pol.hasOwnProperty('self')) { delete res.locals.pol['self']; }
+                // console.log(res.locals.pol);
+                await datastore.save({"key":key, "data":res.locals.pol});
+            }
+        }
+        next();
+    },
+
+    remove_member_from_a_pol: async function (req, res, next) {
+        for(let j = 0; j < res.locals.member.actual_team.length; j++) {
+            if(res.locals.member.actual_team[j] == req.params.pol_id) {
+                res.locals.member.actual_team.splice(j, 1);
+                // console.log("****remove_pol_from_pols****");
+                // console.log(res.locals.pol.id);
+                const key = datastore.key([POLS, parseInt(res.locals.member.id,10)]);
+                if(res.locals.member.hasOwnProperty('id')) { delete res.locals.member['id']; }
+                if(res.locals.member.hasOwnProperty('self')) { delete res.locals.member['self']; }
+                // console.log(res.locals.member);
+                await datastore.save({"key":key, "data":res.locals.member});
+            }
+        }
+        next();
+    },
+
     delete_pol: async function (req, res, next) {
+        console.log("****delete_pol****");
+        console.log(req.params.pol_id);
         const key = datastore.key([POLS, parseInt(req.params.pol_id,10)]);
         await datastore.delete(key);
         next();
