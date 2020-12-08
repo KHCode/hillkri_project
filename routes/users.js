@@ -34,7 +34,7 @@ check_jwt_else = jwt({
   algorithms: [ 'RS256' ]
 });
 
-users.use('/teams', check_jwt_else, check_sub, teams);
+users.use('/teams', check_jwt_else, teams);
 users.get('/', is_user_route, requiresAuth(), new_user_check, post_user, async (req, res, next) => {
   console.log(req.user);
   console.log('-------------------------------');

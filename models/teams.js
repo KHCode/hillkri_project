@@ -105,8 +105,8 @@ module.exports =  {
     },
 
     delete_team: async function (req, res, next) {
-        console.log("****delete_team****");
-        console.log(req.params.team_id);
+        // console.log("****delete_team****");
+        // console.log(req.params.team_id);
         const key = datastore.key([TEAMS, parseInt(req.params.team_id,10)]);
         await datastore.delete(key);
         next();

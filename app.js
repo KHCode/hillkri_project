@@ -77,13 +77,13 @@ app.use(function(err, req, res, next) {
     } else {
       res.status(401).json({Error: 'Invalid token'});
     }
-  } else if (err.name == 'Forbidden') {              //403
+  } else if (err.name == 'ForbiddenError') {              //403
     res.status(err.status).json({Error: err.message});
   } else if (err.name == 'NotFound') {               //404
     res.status(err.status).json({Error: err.message});
   } else if (err.name == 'MethodNotAllowedError') {       //405
     res.status(err.status).json({Error: err.message});
-  } else if (err.name == 'NotAcceptable') {          //406
+  } else if (err.name == 'NotAcceptableError') {          //406
     res.status(err.status).json({Error: err.message});
   } else {
     console.error(err.stack)
