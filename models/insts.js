@@ -75,12 +75,9 @@ module.exports =  {
                 if(res.locals.insts[i].actual_members[j] == req.params.pol_id) {
                     res.locals.insts[i].actual_members.splice(j, 1);
                     res.locals.inst = res.locals.insts[i];
-                    console.log("****remove_pol_from_insts****");
-                    console.log(res.locals.inst.id);
                     const key = datastore.key([INSTS, parseInt(res.locals.inst.id,10)]);
                     if(res.locals.inst.hasOwnProperty('id')) { delete res.locals.inst['id']; }
                     if(res.locals.inst.hasOwnProperty('self')) { delete res.locals.inst['self']; }
-                    console.log(res.locals.inst);
                     await datastore.save({"key":key, "data":res.locals.inst});
                 }
             }
@@ -92,12 +89,9 @@ module.exports =  {
         for(let j = 0; j < res.locals.inst.actual_members.length; j++) {
             if(res.locals.inst.actual_members[j] == req.params.pol_id) {
                 res.locals.inst.actual_members.splice(j, 1);
-                // console.log("****remove_pol_from_insts****");
-                // console.log(res.locals.inst.id);
                 const key = datastore.key([INSTS, parseInt(res.locals.inst.id,10)]);
                 if(res.locals.inst.hasOwnProperty('id')) { delete res.locals.inst['id']; }
                 if(res.locals.inst.hasOwnProperty('self')) { delete res.locals.inst['self']; }
-                // console.log(res.locals.team);
                 await datastore.save({"key":key, "data":res.locals.inst});
             }
         }
@@ -105,8 +99,6 @@ module.exports =  {
     },
 
     delete_inst: async function (req, res, next) {
-        console.log("****delete_inst****");
-        console.log(req.params.inst_id);
         const key = datastore.key([INSTS, parseInt(req.params.inst_id,10)]);
         await datastore.delete(key);
         next();

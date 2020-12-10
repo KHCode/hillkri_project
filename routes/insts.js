@@ -38,12 +38,12 @@ insts.delete('/:inst_id/pols/:pol_id', get_an_inst, remove_pol_from_an_inst, get
 });
 
 insts.delete('/', (req, res, next) => {
-    var error = new createError.MethodNotAllowed('You can not use delete at a collections level');
+    var error = new createError.MethodNotAllowed('You can not use this method on this route');
     next(error);
 });
 
 insts.put('/', (req, res, next) => {
-    var error = new createError.MethodNotAllowed('You can not use put at a collections level');
+    var error = new createError.MethodNotAllowed('You can not use this method on this route');
     next(error);
 });
 

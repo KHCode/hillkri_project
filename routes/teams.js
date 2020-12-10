@@ -43,12 +43,12 @@ teams.delete('/:team_id/pols/:pol_id', get_a_team, check_sub, remove_pol_from_a_
 });
 
 teams.delete('/', (req, res, next) => {
-    var error = new createError.MethodNotAllowed('You can not use delete at a collections level');
+    var error = new createError.MethodNotAllowed('You can not use this method on this route');
     next(error);
 });
 
 teams.put('/', (req, res, next) => {
-    var error = new createError.MethodNotAllowed('You can not use put at a collections level');
+    var error = new createError.MethodNotAllowed('You can not use this method on this route');
     next(error);
 });
 

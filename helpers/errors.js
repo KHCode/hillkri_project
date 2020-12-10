@@ -18,7 +18,7 @@ module.exports = {
 
     check_accepts: function (req, res, next) {
         if(req.accepts('application/json') == false) {
-            var error = new createError.NotAcceptable('Not Acceptable MIME type, API only sends back json');
+            var error = new createError.NotAcceptable('Cannot send back response in that MIME type');
                 next(error);
         }
         next();

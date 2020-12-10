@@ -19,16 +19,12 @@ router.get('/users', get_users, build_users, (req, res) => {
 })
 
 router.delete('/users', (req, res, next) => {
-  var error = new createError.MethodNotAllowed('You can not use delete at a collections level');
-  console.log(error);
-  console.log("--------------------------")
+  var error = new createError.MethodNotAllowed('You can not use this method on this route');
   next(error);
 });
 
 router.put('/users', (req, res, next) => {
-  var error = new createError.MethodNotAllowed('You can not use put at a collections level');
-  console.log(error);
-  console.log("--------------------------")
+  var error = new createError.MethodNotAllowed('You can not use this method on this route');
   next(error);
 });
 
