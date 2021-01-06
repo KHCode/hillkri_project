@@ -19,8 +19,16 @@ module.exports = {
     check_accepts: function (req, res, next) {
         if(req.accepts('application/json') == false) {
             var error = new createError.NotAcceptable('Cannot send back response in that MIME type');
-                next(error);
+            next(error);
         }
         next();
     },
-}
+
+    has_required_params: function (req, res, next) {
+        if(!req.body.name || req.body.name == '') {
+            var error = new createError.BadRequest('Missing required attributes')
+            next(error);
+        }
+        next();
+    }
+ }

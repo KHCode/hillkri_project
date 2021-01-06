@@ -43,7 +43,7 @@ app.use(
       authRequired: false,
       auth0Logout: true,
       issuerBaseURL: process.env.ISSUER_BASE_URL,
-      baseURL: process.env.BASE_URL,
+      baseURL: 'http://localhost:3000',
       clientID: process.env.CLIENT_ID,
       secret: process.env.SECRET   })
 );
@@ -77,6 +77,8 @@ app.use(function(err, req, res, next) {
     } else {
       res.status(401).json({Error: 'Invalid token'});
     }
+  } else if (err.name == 'BadRequestError') {              //403
+    res.status(err.status).json({Error: err.message});
   } else if (err.name == 'ForbiddenError') {              //403
     res.status(err.status).json({Error: err.message});
   } else if (err.name == 'NotFound') {               //404
