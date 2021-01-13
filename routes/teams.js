@@ -2,10 +2,17 @@ const express = require('express');
 var createError = require('http-errors');
 const { get_a_pol, edit_a_pol } = require('../models/pols');
 const { post_team, get_a_team, get_teams, remove_pol_from_a_team, delete_team, edit_a_team, join_pol_team } = require('../models/teams');
-const { check_sub, check_accepts, has_required_params } = require('../helpers/errors');
+const { check_sub, check_accepts, has_required_params, check_for_duplicate_name, check_media_type } = require('../helpers/errors');
 let teams = express.Router();
 
-teams.post('/', check_accepts, has_required_params, post_team, get_a_team, (req, res) => {
+teams.post('/', 
+    check_accepts,
+    check_media_type,
+    has_required_params,
+    get_teams,
+    check_for_duplicate_name,
+    post_team,
+    get_a_team, (req, res) => {
     res.status(201).json(res.locals.team);
 });
 

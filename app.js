@@ -12,6 +12,7 @@ var usersRouter = require('./routes/users');
 var polsRouter = require('./routes/pols');
 var instsRouter = require('./routes/insts');
 const { save_user_id } = require('./models/users');
+const { has_required_params } = require('./helpers/errors');
 
 var app = express();
 
@@ -71,21 +72,23 @@ app.use(function(err, req, res, next) {
   console.log(typeof err.name);
   console.log(err.status);
 
-  if (err.name == 'UnauthorizedError') { //401
+  if (err.name == 'UnauthorizedError') {                  //401
     if (res.locals.isUserRoute) {
       res.redirect('/');
     } else {
       res.status(401).json({Error: 'Invalid token'});
     }
-  } else if (err.name == 'BadRequestError') {              //403
+  } else if (err.name == 'BadRequestError') {             //403
     res.status(err.status).json({Error: err.message});
   } else if (err.name == 'ForbiddenError') {              //403
     res.status(err.status).json({Error: err.message});
-  } else if (err.name == 'NotFound') {               //404
+  } else if (err.name == 'NotFound') {                    //404
     res.status(err.status).json({Error: err.message});
   } else if (err.name == 'MethodNotAllowedError') {       //405
     res.status(err.status).json({Error: err.message});
   } else if (err.name == 'NotAcceptableError') {          //406
+    res.status(err.status).json({Error: err.message});
+  } else if (err.name == 'UnsupportedMediaTypeError') {   //415
     res.status(err.status).json({Error: err.message});
   } else {
     console.error(err.stack)

@@ -25,8 +25,27 @@ module.exports = {
     },
 
     has_required_params: function (req, res, next) {
+        console.dir(req.path);
         if(!req.body.name || req.body.name == '') {
             var error = new createError.BadRequest('Missing required attributes')
+            next(error);
+        }
+        next();
+    },
+
+    check_for_duplicate_name: function (req, res, next) {
+        for(let i = 0; i < res.locals.teams.length; i++) {
+            if(res.locals.teams[i].name == req.body.name) {
+                var error = new createError.Forbidden('Cannot Have Duplicate Names');
+                next(error);
+            }
+        }
+        next();
+    },
+
+    check_media_type: function (req, res, next) {
+        if(req.get('content-type') !== 'application/json'){
+            var error = new createError.UnsupportedMediaType('Unsupported Media Type');
             next(error);
         }
         next();

@@ -28,8 +28,11 @@ module.exports =  {
         res.locals.teams = teams;
         for(let i = 0; i < teams.length; i++) {
             res.locals.teams[i].id = teams[i][Datastore.KEY].id;
+            res.locals.teams[i].name = teams[i].name;
             res.locals.teams[i].self = req.protocol + "://" + req.get('host') + req.baseUrl + "/" + teams[i][Datastore.KEY].id;
         }
+        console.log(res.locals.teams.length);
+        console.log(res.locals.teams);
         next();
     },
     
